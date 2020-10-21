@@ -727,12 +727,16 @@ Concurrency:		       96.02
 
 배포기간 동안 Availability 가 변화없기 때문에 무정지 재배포가 성공한 것으로 확인됨.
 
-## Istio 모니터링
-* 
+## Istio 적용
+* Istio 모니터링 툴을 설치하고 istio를 enable 설정한 다음 deploy를 배포하여 각 pod들이side-car pattern으로 생성되어 있는 것을 확인
+![image](https://user-images.githubusercontent.com/16397080/96667916-f582a700-1394-11eb-825a-46a6614ac90e.png)
+
 
 ## Kiali
+* Monitoring Server - Kiali를 적용하였다. 아래는 18:19부터 1분간 호출된 서비스에 대해 Graph 형식으로 보여지는 모니터링 결과를 확인
 ![image](https://user-images.githubusercontent.com/16397080/96666770-c53a0900-1392-11eb-80bf-0248fa7cba76.png)
 
 
 ## Jaeger
+* Tracing Server - Jaeger를 적용하였다. 아래는 18:20 이전 gateway로 동기 호출된 결과에 대해 Trace 결과를 보여주고 
 ![image](https://user-images.githubusercontent.com/16397080/96666714-ab002b00-1392-11eb-985a-7f643570ce99.png)
