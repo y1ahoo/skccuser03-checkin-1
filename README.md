@@ -41,8 +41,9 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
     1. 포인트 결제, 포인트 적립 기능이 수행되지 않더라도 흡연장소 체크인/아웃은 작동되어야 한다. Async (event-driven), Eventual Consistency
     1. (기능 추가시 내용 업데이트 필요)  Circuit breaker, fallback
 3. 성능
-    1. 고객이 포인트 적립/차감 내역을 확인할 수 있어야 한다  CQRS
-    1. (내용 업데이트 필요)  Event driven
+    1. 고객이 흡연장소에 체크인/아웃한 내역과 포인트 적립 내역을 mypage에서 확인이 가능해야 한다. CQRS
+    1. 고객이 포인트 결제하여 차감된 내역을 mypage에서 확인이 가능해야 한다. CQRS
+    1. 체크아웃후 포인트 적립이 완료되면 적립상태가 체크인 내역에 업데이트 되어야 한다. SAGA
 
 
 # 분석/설계
@@ -74,16 +75,16 @@ CNA 개발에 요구되는 체크포인트를 만족하기 위하여 분석/설�
 ### 어그리게잇으로 묶기
 ![image](https://user-images.githubusercontent.com/70302884/96574602-a1cb7b80-130a-11eb-8bf7-c15dee072f02.png)
 
-    - (내용 업데이트 필요) app의 Order, store 의 주문처리, 결제의 결제이력은 그와 연결된 command 와 event 들에 의하여 트랜잭션이 유지되어야 하는 단위로 그들 끼리 묶어줌
+    - (내용 업데이트 필요) pay의 지불, point 의 차감은 그와 연결된 command 와 event 들에 의하여 트랜잭션이 유지되어야 하는 단위로 그들 끼리 묶어줌
 
 ### 바운디드 컨텍스트로 묶기
 
 ![image](https://user-images.githubusercontent.com/70302884/96575104-4bab0800-130b-11eb-9d9c-dde7958dd0db.png)
 
     - 도메인 서열 분리 (내용 업데이트 필요)
-        - Core Domain:  app(front), store : 없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 app 의 경우 1주일 1회 미만, store 의 경우 1개월 1회 미만
-        - Supporting Domain:   marketing, customer : 경쟁력을 내기위한 서비스이며, SLA 수준은 연간 60% 이상 uptime 목표, 배포주기는 각 팀의 자율이나 표준 스프린트 주기가 1주일 이므로 1주일 1회 이상을 기준으로 함.
-        - General Domain:   pay : 결제서비스로 3rd Party 외부 서비스를 사용하는 것이 경쟁력이 높음 (핑크색으로 이후 전환할 예정)
+        - Core Domain:  checkIn : 없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 app 의 경우 1주일 1회 미만, store 의 경우 1개월 1회 미만
+        - Supporting Domain:   point, pay : 경쟁력을 내기위한 서비스이며, SLA 수준은 연간 60% 이상 uptime 목표, 배포주기는 각 팀의 자율이나 표준 스프린트 주기가 1주일 이므로 1주일 1회 이상을 기준으로 함.
+        - General Domain:   지도서비스 : Google Maps 등 3rd Party 외부 서비스를 사용하는 것이 경쟁력이 높음 (핑크색으로 이후 전환할 예정)
 
 ### 폴리시 부착 (괄호는 수행주체, 폴리시 부착을 둘째단계에서 해놔도 상관 없음. 전체 연계가 초기에 드러남)
 
